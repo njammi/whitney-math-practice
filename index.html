@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 6 Math Practice Test</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --card-bg: #ffffff;
+    --text: #1d2433;
+    --muted: #5b667a;
+    --border: #e1e5ee;
+    --accent: #3b5bdb;
+    --accent-light: #eef1fd;
+    --correct-bg: #e6f7ec;
+    --correct-border: #2f9e52;
+    --incorrect-bg: #fdecec;
+    --incorrect-border: #d6433c;
+    --part-bg: #eef1fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151c;
+      --card-bg: #1b2028;
+      --text: #eef1f7;
+      --muted: #9aa4b7;
+      --border: #2c3341;
+      --accent: #7f9bff;
+      --accent-light: #232a3d;
+      --correct-bg: #163a24;
+      --correct-border: #3ec370;
+      --incorrect-bg: #3b1c1c;
+      --incorrect-border: #e8615a;
+      --part-bg: #232a3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151c;
+    --card-bg: #1b2028;
+    --text: #eef1f7;
+    --muted: #9aa4b7;
+    --border: #2c3341;
+    --accent: #7f9bff;
+    --accent-light: #232a3d;
+    --correct-bg: #163a24;
+    --correct-border: #3ec370;
+    --incorrect-bg: #3b1c1c;
+    --incorrect-border: #e8615a;
+    --part-bg: #232a3d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 16px;
+    padding-bottom: 120px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin: 0; }
+
+  .progress-bar-outer {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 10px 0 12px;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .progress-track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.2s ease;
+  }
+
+  #scoreBanner {
+    display: none;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    border: 1px solid var(--border);
+    background: var(--accent-light);
+    text-align: center;
+  }
+  #scoreBanner .big { font-size: 1.6rem; font-weight: 700; }
+  #scoreBanner .msg { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+
+  .part-header {
+    background: var(--part-bg);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin: 22px 0 12px;
+  }
+
+  .question {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .question.correct { background: var(--correct-bg); border-color: var(--correct-border); }
+  .question.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect-border); }
+
+  .q-text { font-weight: 600; margin-bottom: 10px; font-size: 0.97rem; }
+  .q-num { color: var(--accent); margin-right: 4px; }
+
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .option:hover { background: var(--accent-light); }
+  .option input { accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+  .option.correct-answer { outline: 2px solid var(--correct-border); }
+  .option.wrong-pick { outline: 2px solid var(--incorrect-border); }
+
+  .result-note {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .result-note.good { color: var(--correct-border); }
+  .result-note.bad { color: var(--incorrect-border); }
+
+  .parent-zone {
+    margin-top: 28px;
+    border-top: 1px dashed var(--border);
+    padding-top: 18px;
+  }
+  .parent-zone-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  button {
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  #gradeBtn { background: var(--accent); color: white; }
+  #resetBtn { background: transparent; color: var(--incorrect-border); border: 1px solid var(--incorrect-border); }
+  #gradeBtn:active, #resetBtn:active { transform: scale(0.98); }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-top: 28px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Grade 6 Math Practice Test</h1>
+    <p class="subtitle">40 questions &middot; pick an answer for each, then ask a parent to check your work</p>
+  </header>
+
+  <div class="progress-bar-outer">
+    <div class="progress-label">
+      <span id="progressText">0 of 40 answered</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="scoreBanner">
+    <div class="big" id="scoreBig"></div>
+    <div class="msg" id="scoreMsg"></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="parent-zone">
+    <div class="parent-zone-label">Parent Zone</div>
+    <div class="btn-row">
+      <button id="gradeBtn">Check My Answers</button>
+      <button id="resetBtn">Reset Test</button>
+    </div>
+  </div>
+
+  <footer>Original practice material, not an official test. Progress is saved on this device.</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  {n:1, part:"Part A — Number Sense & Operations", text:"Evaluate: 48 ÷ 6 × 3 + 5", opts:{A:"9",B:"24",C:"29",D:"35"}, ans:"C"},
+  {n:2, part:"Part A — Number Sense & Operations", text:"Evaluate: 4 + 3 × (12 - 7)²", opts:{A:"79",B:"169",C:"225",D:"229"}, ans:"A"},
+  {n:3, part:"Part A — Number Sense & Operations", text:"What is the GCF of 72 and 108?", opts:{A:"12",B:"18",C:"24",D:"36"}, ans:"D"},
+  {n:4, part:"Part A — Number Sense & Operations", text:"What is the LCM of 18 and 24?", opts:{A:"48",B:"54",C:"72",D:"96"}, ans:"C"},
+  {n:5, part:"Part A — Number Sense & Operations", text:"Which expression is equivalent to 18x + 30?", opts:{A:"3(6x + 10)",B:"6(3x + 5)",C:"9(2x + 3)",D:"18(x + 30)"}, ans:"B"},
+  {n:6, part:"Part A — Number Sense & Operations", text:"Compute: 3 1/4 + 2 5/6", opts:{A:"5 7/12",B:"6 1/12",C:"6 5/12",D:"7 1/12"}, ans:"B"},
+  {n:7, part:"Part A — Number Sense & Operations", text:"Compute: 5/6 ÷ 10/9", opts:{A:"3/4",B:"4/5",C:"5/9",D:"25/27"}, ans:"A"},
+  {n:8, part:"Part A — Number Sense & Operations", text:"A recipe uses 2 1/2 cups of flour for 20 cookies. How much flour is needed for 32 cookies?", opts:{A:"3 cups",B:"3 1/2 cups",C:"4 cups",D:"4 1/2 cups"}, ans:"C"},
+  {n:9, part:"Part A — Number Sense & Operations", text:"Compute: 7.56 ÷ 0.12", opts:{A:"6.3",B:"63",C:"630",D:"0.63"}, ans:"B"},
+  {n:10, part:"Part A — Number Sense & Operations", text:"Which number is greatest?", opts:{A:"0.62",B:"5/8",C:"61%",D:"0.605"}, ans:"B"},
+
+  {n:11, part:"Part B — Ratios, Rates & Percents", text:"The ratio of red to blue marbles is 4:7. If there are 55 marbles total, how many are blue?", opts:{A:"20",B:"28",C:"35",D:"44"}, ans:"C"},
+  {n:12, part:"Part B — Ratios, Rates & Percents", text:"A car travels 168 miles in 2.4 hours. What is its average speed?", opts:{A:"60 mph",B:"65 mph",C:"70 mph",D:"72 mph"}, ans:"C"},
+  {n:13, part:"Part B — Ratios, Rates & Percents", text:"A runner travels at 7.5 mph for 2 hours 24 minutes. How far does the runner travel?", opts:{A:"16 miles",B:"18 miles",C:"19.5 miles",D:"21 miles"}, ans:"B"},
+  {n:14, part:"Part B — Ratios, Rates & Percents", text:"A $75 item is discounted 20%. What is the sale price?", opts:{A:"$55",B:"$60",C:"$62.50",D:"$65"}, ans:"B"},
+  {n:15, part:"Part B — Ratios, Rates & Percents", text:"After a 25% discount, a jacket costs $54. What was the original price?", opts:{A:"$67.50",B:"$70",C:"$72",D:"$75"}, ans:"C"},
+  {n:16, part:"Part B — Ratios, Rates & Percents", text:"A $200 item increases in price by 15% and then is discounted 15%. What is the final price?", opts:{A:"$195.50",B:"$200",C:"$204.50",D:"$230"}, ans:"A"},
+
+  {n:17, part:"Part C — Expressions, Equations & Integers", text:"Solve: 7x - 9 = 47", opts:{A:"6",B:"7",C:"8",D:"9"}, ans:"C"},
+  {n:18, part:"Part C — Expressions, Equations & Integers", text:"Solve: 4(x + 3) = 2x + 22", opts:{A:"4",B:"5",C:"6",D:"8"}, ans:"B"},
+  {n:19, part:"Part C — Expressions, Equations & Integers", text:"Which value makes 3n + 8 > 29 true?", opts:{A:"5",B:"6",C:"7",D:"8"}, ans:"D"},
+  {n:20, part:"Part C — Expressions, Equations & Integers", text:"A number is divided by 4, then 7 is added. The result is 19. What is the number?", opts:{A:"40",B:"44",C:"48",D:"52"}, ans:"C"},
+  {n:21, part:"Part C — Expressions, Equations & Integers", text:"The temperature was 4°C in the morning and dropped 11°C. What was the new temperature?", opts:{A:"-15°C",B:"-7°C",C:"7°C",D:"15°C"}, ans:"B"},
+  {n:22, part:"Part C — Expressions, Equations & Integers", text:"Evaluate: -8 + 3(5 - 9)", opts:{A:"-20",B:"-12",C:"4",D:"20"}, ans:"A"},
+  {n:23, part:"Part C — Expressions, Equations & Integers", text:"Which is farthest from zero?", opts:{A:"-11",B:"9",C:"-7",D:"10"}, ans:"A"},
+  {n:24, part:"Part C — Expressions, Equations & Integers", text:"Point A is at (-3, 5). It is reflected across the y-axis. What are the new coordinates?", opts:{A:"(-3,-5)",B:"(3,5)",C:"(3,-5)",D:"(5,-3)"}, ans:"B"},
+
+  {n:25, part:"Part D — Geometry & Data", text:"A rectangle has length 15 cm and width 8 cm. What is its area?", opts:{A:"46 cm²",B:"92 cm²",C:"120 cm²",D:"240 cm²"}, ans:"C"},
+  {n:26, part:"Part D — Geometry & Data", text:"A rectangle has perimeter 62 cm. Its length is 19 cm. What is its width?", opts:{A:"10 cm",B:"12 cm",C:"14 cm",D:"24 cm"}, ans:"B"},
+  {n:27, part:"Part D — Geometry & Data", text:"A triangle has base 14 cm and height 9 cm. What is its area?", opts:{A:"46 cm²",B:"63 cm²",C:"126 cm²",D:"252 cm²"}, ans:"B"},
+  {n:28, part:"Part D — Geometry & Data", text:"A rectangular prism is 8 cm long, 5 cm wide, and 6 cm high. What is its volume?", opts:{A:"19 cm³",B:"120 cm³",C:"240 cm³",D:"480 cm³"}, ans:"C"},
+  {n:29, part:"Part D — Geometry & Data", text:"A square has an area of 196 square units. What is its perimeter?", opts:{A:"28",B:"42",C:"56",D:"98"}, ans:"C"},
+  {n:30, part:"Part D — Geometry & Data", text:"The mean of five numbers is 18. Four numbers are 12, 17, 21, and 24. What is the fifth number?", opts:{A:"14",B:"16",C:"18",D:"20"}, ans:"B"},
+  {n:31, part:"Part D — Geometry & Data", text:"The data are 4, 6, 7, 7, 9, 12, 15. What is the median?", opts:{A:"7",B:"8",C:"9",D:"10"}, ans:"A"},
+  {n:32, part:"Part D — Geometry & Data", text:"Which measure is most affected by an extremely large outlier?", opts:{A:"Mean",B:"Median",C:"Mode",D:"Minimum"}, ans:"A"},
+
+  {n:33, part:"Part E — Advanced Reasoning", text:"The pattern is 2, 6, 12, 20, 30, __. What is next?", opts:{A:"38",B:"40",C:"42",D:"44"}, ans:"C"},
+  {n:34, part:"Part E — Advanced Reasoning", text:"Three consecutive integers have a sum of 96. What is the largest integer?", opts:{A:"31",B:"32",C:"33",D:"34"}, ans:"C"},
+  {n:35, part:"Part E — Advanced Reasoning", text:"The ratio of boys to girls is 3:4. After 6 boys join, the ratio becomes 9:8. How many girls were there originally?", opts:{A:"8",B:"12",C:"16",D:"24"}, ans:"C"},
+  {n:36, part:"Part E — Advanced Reasoning", text:"A tank is 2/5 full. After 30 gallons are added, it is 7/10 full. What is the tank capacity?", opts:{A:"75 gal",B:"90 gal",C:"100 gal",D:"120 gal"}, ans:"C"},
+  {n:37, part:"Part E — Advanced Reasoning", text:"Lena spends 1/3 of her money, then spends 1/4 of what remains. She has $30 left. How much did she start with?", opts:{A:"$50",B:"$60",C:"$72",D:"$80"}, ans:"B"},
+  {n:38, part:"Part E — Advanced Reasoning", text:"A car travels 120 miles at 60 mph and another 120 miles at 40 mph. How long does the entire trip take?", opts:{A:"4 hours",B:"4.5 hours",C:"5 hours",D:"6 hours"}, ans:"C"},
+  {n:39, part:"Part E — Advanced Reasoning", text:"The difference between the largest and smallest of three numbers in the ratio 2:5:7 is 35. What is their sum?", opts:{A:"70",B:"84",C:"98",D:"105"}, ans:"C"},
+  {n:40, part:"Part E — Advanced Reasoning", text:"A two-digit number has digits that sum to 13. The tens digit is 3 more than the ones digit. What is the number?", opts:{A:"58",B:"67",C:"76",D:"85"}, ans:"D"},
+];
+
+const STORAGE_KEY = "whitneyMathPracticeV1";
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { answers: {}, graded: false };
+    const parsed = JSON.parse(raw);
+    return { answers: parsed.answers || {}, graded: !!parsed.graded };
+  } catch (e) {
+    return { answers: {}, graded: false };
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+let state = loadState();
+
+const quizEl = document.getElementById("quiz");
+let lastPart = null;
+
+QUESTIONS.forEach(q => {
+  if (q.part !== lastPart) {
+    const header = document.createElement("div");
+    header.className = "part-header";
+    header.textContent = q.part;
+    quizEl.appendChild(header);
+    lastPart = q.part;
+  }
+
+  const card = document.createElement("div");
+  card.className = "question";
+  card.id = "q" + q.n;
+
+  const qText = document.createElement("div");
+  qText.className = "q-text";
+  qText.innerHTML = '<span class="q-num">' + q.n + ".</span> " + q.text;
+  card.appendChild(qText);
+
+  const optsWrap = document.createElement("div");
+  optsWrap.className = "options";
+
+  Object.keys(q.opts).forEach(letter => {
+    const label = document.createElement("label");
+    label.className = "option";
+    label.id = "q" + q.n + "-" + letter;
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "q" + q.n;
+    input.value = letter;
+    if (state.answers[q.n] === letter) input.checked = true;
+    input.addEventListener("change", () => {
+      state.answers[q.n] = letter;
+      saveState();
+      updateProgress();
+    });
+
+    const span = document.createElement("span");
+    span.textContent = letter + ". " + q.opts[letter];
+
+    label.appendChild(input);
+    label.appendChild(span);
+    optsWrap.appendChild(label);
+  });
+
+  card.appendChild(optsWrap);
+
+  const note = document.createElement("div");
+  note.className = "result-note";
+  note.id = "note" + q.n;
+  card.appendChild(note);
+
+  quizEl.appendChild(card);
+});
+
+function updateProgress() {
+  const answered = Object.keys(state.answers).length;
+  document.getElementById("progressText").textContent = answered + " of " + QUESTIONS.length + " answered";
+  const pct = Math.round((answered / QUESTIONS.length) * 100);
+  document.getElementById("progressPct").textContent = pct + "%";
+  document.getElementById("progressFill").style.width = pct + "%";
+}
+
+function scoreMessage(score) {
+  if (score >= 36) return "Excellent readiness on this set!";
+  if (score >= 30) return "Strong work — review the missed concepts.";
+  if (score >= 24) return "Good start — keep up targeted practice.";
+  return "Let's review Grade 6 foundations before the next timed set.";
+}
+
+function gradeTest() {
+  let score = 0;
+  QUESTIONS.forEach(q => {
+    const picked = state.answers[q.n];
+    const card = document.getElementById("q" + q.n);
+    const note = document.getElementById("note" + q.n);
+    card.classList.remove("correct", "incorrect");
+    note.classList.remove("good", "bad");
+    Object.keys(q.opts).forEach(letter => {
+      document.getElementById("q" + q.n + "-" + letter).classList.remove("correct-answer", "wrong-pick");
+    });
+
+    if (!picked) {
+      note.textContent = "Not answered — correct answer: " + q.ans + ". " + q.opts[q.ans];
+      note.classList.add("bad");
+      document.getElementById("q" + q.n + "-" + q.ans).classList.add("correct-answer");
+      return;
+    }
+
+    if (picked === q.ans) {
+      score++;
+      card.classList.add("correct");
+      note.textContent = "Correct!";
+      note.classList.add("good");
+      document.getElementById("q" + q.n + "-" + q.ans).classList.add("correct-answer");
+    } else {
+      card.classList.add("incorrect");
+      note.textContent = "Incorrect — you picked " + picked + ". Correct answer: " + q.ans + ". " + q.opts[q.ans];
+      note.classList.add("bad");
+      document.getElementById("q" + q.n + "-" + picked).classList.add("wrong-pick");
+      document.getElementById("q" + q.n + "-" + q.ans).classList.add("correct-answer");
+    }
+  });
+
+  state.graded = true;
+  state.score = score;
+  saveState();
+
+  const banner = document.getElementById("scoreBanner");
+  banner.style.display = "block";
+  document.getElementById("scoreBig").textContent = score + " / " + QUESTIONS.length + " correct";
+  document.getElementById("scoreMsg").textContent = scoreMessage(score);
+  banner.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function resetTest() {
+  if (!confirm("Reset the whole test? This clears all answers and grading.")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = { answers: {}, graded: false };
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  document.querySelectorAll(".question").forEach(c => c.classList.remove("correct", "incorrect"));
+  document.querySelectorAll(".result-note").forEach(n => { n.textContent = ""; n.classList.remove("good", "bad"); });
+  document.querySelectorAll(".option").forEach(o => o.classList.remove("correct-answer", "wrong-pick"));
+  document.getElementById("scoreBanner").style.display = "none";
+  updateProgress();
+}
+
+document.getElementById("gradeBtn").addEventListener("click", gradeTest);
+document.getElementById("resetBtn").addEventListener("click", resetTest);
+
+updateProgress();
+if (state.graded) gradeTest();
+</script>
+</body>
+</html>
